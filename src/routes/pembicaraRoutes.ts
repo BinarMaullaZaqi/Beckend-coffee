@@ -6,7 +6,7 @@ import {
   createPembicara,
   updatePembicara,
   deletePembicara,
-} from "../controllers/pembicaraController";
+} from "../controllers/pembicaraController.js";
 
 const router = Router();
 
