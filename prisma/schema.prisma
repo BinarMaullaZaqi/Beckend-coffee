@@ -1,0 +1,72 @@
+// prisma/schema.prisma
+// Coffee Event Management System
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ─── Tabel 1: Kategori Event ──────────────────────────────────────────────────
+model CategoryEvent {
+  id        Int      @id @default(autoincrement())
+  nama      String   @unique
+  deskripsi String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  events Event[]
+
+  @@map("category_events")
+}
+
+// ─── Tabel 2: Pembicara ───────────────────────────────────────────────────────
+model Pembicara {
+  id           Int      @id @default(autoincrement())
+  nama         String
+  spesialisasi String
+  instansi     String
+  email        String   @unique
+  bio          String?
+  foto         String?
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  events Event[]
+
+  @@map("pembicara")
+}
+
+// ─── Tabel 3: Event ───────────────────────────────────────────────────────────
+model Event {
+  id        Int         @id @default(autoincrement())
+  judul     String
+  deskripsi String
+  tanggal   DateTime
+  lokasi    String
+  harga     Float       @default(0)
+  kapasitas Int         @default(50)
+  imageUrl  String?
+  status    EventStatus @default(UPCOMING)
+  createdAt DateTime    @default(now())
+  updatedAt DateTime    @updatedAt
+
+  categoryId  Int
+  pembicaraId Int
+
+  category  CategoryEvent @relation(fields: [categoryId], references: [id], onDelete: Restrict)
+  pembicara Pembicara     @relation(fields: [pembicaraId], references: [id], onDelete: Restrict)
+
+  @@map("events")
+}
+
+// ─── Enum ─────────────────────────────────────────────────────────────────────
+enum EventStatus {
+  UPCOMING
+  ONGOING
+  COMPLETED
+  CANCELLED
+}
